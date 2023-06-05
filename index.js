@@ -11,7 +11,7 @@ app.use(cors());
 app.use(express.json()); // Parse incoming JSON requests
 
 //Crear la base de datos
- const db = new Database()
+const db = new Database()
 
 
 app.get('/', (req, res) => {
@@ -19,25 +19,25 @@ app.get('/', (req, res) => {
 });
 
 let loggedInEmails = [{
-  email: 'jaimeromangil@gmail.com',
-  password: '123' 
+  email: 'javiceballosmateo@gmail.com',
+  password: '123'
 }]
 
 db.set('users', loggedInEmails)
 app.post('/check/login', (req, res) => {
-   
+
   let validation = {
     loggedIn: false
   }
-  
+
   const email = req.body.email
   const pass = req.body.password
 
-  
+
   db.get("users").then(users => {
-      users.map(user=>{
-      if (user.email==email && user.password==pass) {
-        validation.loggedIn=true;
+    users.map(user => {
+      if (user.email == email && user.password == pass) {
+        validation.loggedIn = true;
         return user;
       }
     })
@@ -51,31 +51,31 @@ app.post('/signin', (req, res) => {
 
   const email = req.body.email
   const pass = req.body.password
-  
+
   db.get("users").then(users => {
-    const alreadyExists = users.map(user=>{
-      if (user.email==email && user.password==pass) {
+    const alreadyExists = users.map(user => {
+      if (user.email == email && user.password == pass) {
         return true;
-      }else{
+      } else {
         return false
       }
     }).filter(a => a)
 
     let signInresult = {
-      signed : false,
-      reason : 'User already exist'
+      signed: false,
+      reason: 'User already exist'
     }
-    
-    if(!alreadyExists || alreadyExists.length <= 0){
+
+    if (!alreadyExists || alreadyExists.length <= 0) {
       console.log('User added')
-      users.push({email:email,password:pass})
+      users.push({ email: email, password: pass })
       db.set("users", users)
       signInresult.signed = true
       signInresult.reason = 'Added successfully'
-    }else{
+    } else {
       console.log('User already exists', 'totalUsers: ' + users.length)
     }
-    // console.log('All Users: ' + JSON.stringify(users))
+
     res.json(signInresult)
   })
 })
